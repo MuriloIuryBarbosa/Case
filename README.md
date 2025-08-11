@@ -5,14 +5,16 @@ O case foi estruturado para demonstrar habilidades de QA de dados, ETL, validaç
 
 1️⃣ Estrutura do Projeto
 
-CASE/
-│── CSV/                         # Exportações CSV para uso no Power BI
-│── SQL/                         # Scripts SQL organizados por etapa
-│── Power_BI/                    # Relatórios e arquivos de conexão
-│── venv/                        # Ambiente virtual Python
-│── .env                         # Variáveis de ambiente (credenciais MySQL)
-│── populate_table.py            # Script para popular dados simulados
-│── README.md                    # Documentação do projeto
+| Pasta / Arquivo      | Descrição                                     |
+|----------------------|-----------------------------------------------|
+| CSV/                 | Exportações CSV para uso no Power BI          |
+| SQL/                 | Scripts SQL organizados por etapa             |
+| Power_BI/            | Relatórios e arquivos de conexão              |
+| venv/                | Ambiente virtual Python                       |
+| .env                 | Variáveis de ambiente (credenciais MySQL)     |
+| populate_table.py    | Script para popular dados simulados           |
+| README.md            | Documentação do projeto                       |
+
 
 
 2️⃣ Etapas do Desenvolvimento
