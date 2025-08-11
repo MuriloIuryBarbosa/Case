@@ -2,7 +2,6 @@
 <html lang="pt-br">
 <head>
 <meta charset="utf-8">
-<title>Case de QA e Análise de Dados – GA4 & BigQuery Simulation (MySQL Local)</title>
 </head>
 <body>
 
