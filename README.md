@@ -1,128 +1,163 @@
-      📊 Case de QA e Análise de Dados – GA4 & BigQuery Simulation (MySQL Local)
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<title>Case de QA e Análise de Dados – GA4 & BigQuery Simulation (MySQL Local)</title>
+<style>
+  :root { --fg:#0f172a; --muted:#475569; --accent:#0ea5e9; --bg:#ffffff; --chip:#f1f5f9; }
+  body { font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Ubuntu,'Helvetica Neue',Arial,'Noto Sans',sans-serif; color:var(--fg); line-height:1.6; margin:0; padding:24px; background:var(--bg);}
+  h1,h2,h3{ margin:18px 0 8px; }
+  h1{ font-size:26px; }
+  h2{ font-size:20px; border-left:4px solid var(--accent); padding-left:8px; }
+  h3{ font-size:18px; }
+  p,li{ color:var(--fg); }
+  .muted{ color:var(--muted); }
+  .badge{ display:inline-block; background:var(--chip); padding:4px 8px; border-radius:999px; font-size:12px; margin-right:6px; }
+  pre, code { font-family: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace; }
+  pre { background:#0b1020; color:#e6edf3; padding:12px 14px; border-radius:10px; overflow:auto; }
+  code.inline { background:#0b1020; color:#e6edf3; padding:2px 6px; border-radius:6px; }
+  .kpi { display:inline-block; background:#ecfeff; border:1px solid #cffafe; color:#164e63; padding:4px 8px; border-radius:6px; margin-right:6px; font-size:12px;}
+  .grid { display:grid; grid-template-columns: 1fr; gap:10px; }
+  .card { border:1px solid #e2e8f0; border-radius:12px; padding:14px; background:#fff; }
+  .tree pre{ background:#0f172a; }
+  a { color:#0366d6; text-decoration:none; }
+  a:hover { text-decoration:underline; }
+  hr{ border:none; border-top:1px solid #e2e8f0; margin:20px 0; }
+</style>
+</head>
+<body>
 
-Este projeto simula um cenário real de qualidade de dados e análise de conversão por canal utilizando dados exportados do Google Analytics 4 (GA4) para BigQuery, mas recriados em MySQL local para evitar custos de cloud.
-O case foi estruturado para demonstrar habilidades de QA de dados, ETL, validação e análise de impacto da qualidade.
+<h1>📊 Case de QA e Análise de Dados – GA4 &amp; BigQuery Simulation (MySQL Local)</h1>
+<p>Este projeto simula um cenário real de <strong>qualidade de dados</strong> e <strong>análise de conversão por canal</strong> utilizando dados exportados do Google Analytics 4 (GA4) para BigQuery, mas recriados em <strong>MySQL local</strong> para evitar custos de cloud. O case demonstra habilidades de <em>Data QA</em>, <em>ETL</em>, validação e análise do impacto da qualidade.</p>
 
-1️⃣ Estrutura do Projeto
+<p><span class="badge">MySQL</span><span class="badge">Python 3.13</span><span class="badge">PyMySQL</span><span class="badge">python-dotenv</span><span class="badge">Power BI</span><span class="badge">Ubuntu</span><span class="badge">Windows 11</span></p>
 
-CASE/
-│── CSV/ # Exportações CSV para uso no Power BI
-│── SQL/ # Scripts SQL organizados por etapa
-│── Power_BI/ # Relatórios e arquivos de conexão
-│── venv/ # Ambiente virtual Python
-│── .env # Variáveis de ambiente (credenciais MySQL)
-│── populate_table.py # Script para popular dados simulados
-│── README.md # Documentação do projeto
+<h2>1️⃣ Estrutura do Projeto</h2>
+<div class="tree">
+<pre>CASE/
+│── CSV/                 # Exportações CSV para uso no Power BI
+│── SQL/                 # Scripts SQL organizados por etapa
+│── Power_BI/            # Relatórios e arquivos de conexão
+│── venv/                # Ambiente virtual Python
+│── .env                 # Variáveis de ambiente (credenciais MySQL)
+│── populate_table.py    # Script para popular dados simulados
+│── README.md            # Documentação do projeto
+</pre>
+</div>
 
-2️⃣ Etapas do Desenvolvimento
-	1. Criação do Schema e Tabela de Eventos
-	Arquivo: Cria_Schema_e_tabela_GA4_GTM.sql
-		• Cria o schema Case e a tabela GA4_GTM que receberá os eventos GA4 simulados.
-		• Estrutura compatível com colunas comuns no GA4 Export.
+<h2>2️⃣ Etapas do Desenvolvimento</h2>
 
+<h3>1. Criação do Schema e Tabela de Eventos</h3>
+<p><strong>Arquivo:</strong> <code class="inline">SQL/Cria_Schema_e_tabela_GA4_GTM.sql</code><br>
+Cria o schema <code class="inline">Case</code> e a tabela <code class="inline">GA4_GTM</code> compatível com campos comuns do GA4 Export.</p>
 
+<h3>2. População de Dados com Simulação de Problemas de Qualidade</h3>
+<p><strong>Arquivo:</strong> <code class="inline">populate_table.py</code></p>
+<ul>
+  <li>Insere <strong>300</strong> registros, sendo <strong>50</strong> com problemas de qualidade.</li>
+  <li>Usa variáveis de ambiente via <code class="inline">.env</code>.</li>
+  <li>Aleatoriedade controlada para reproduzibilidade.</li>
+</ul>
+<p><strong>Problemas simulados:</strong> <em>source_medium</em> nulo/ inválido; <em>event_id</em> duplicado; datas futuras em <em>event_ts</em>; <em>event_name</em> fora do domínio; <em>page_location</em> malformado; <em>purchase</em> sem <em>transaction_id</em> / <em>value</em> inválido / moeda inválida; <em>items</em> negativos/irreais; <em>session_id</em> nulo.</p>
 
-	2. População de Dados com Simulação de Problemas de Qualidade
-	Arquivo: populate_table.py
-		• Script Python que insere 300 registros na tabela, sendo 50 com problemas de 		qualidade (nulos, duplicatas, datas futuras, valores inválidos etc.).
-		• Utiliza variáveis de ambiente no .env para conexão MySQL.
-		• Garante aleatoriedade controlada para reproduzibilidade.
+<h3>3. Validação de Qualidade dos Dados</h3>
+<p><strong>Arquivo:</strong> <code class="inline">SQL/Cria_Procedure_de_validacao_dedados.sql</code></p>
+<ul>
+  <li>Procedure <code class="inline">sp_run_quality_checks</code> executa regras de validação e grava em <code class="inline">QA_RESULTS</code>.</li>
+  <li>View <code class="inline">vw_qa_summary</code> resume violações por severidade/status.</li>
+</ul>
 
+<details>
+  <summary><strong>Como executar</strong></summary>
+  <pre>CALL `Case`.`sp_run_quality_checks`();
 
-
-
-Problemas simulados:
-	• source_medium nulo ou inválido
-	• event_id duplicado
-	• Datas futuras em event_ts
-	• event_name fora do domínio permitido
-	• page_location malformado
-	• Compras (purchase) sem transaction_id ou valores inválidos
-	• items negativos ou irreais
-	• session_id nulo
-
-3. Validação de Qualidade dos Dados
-	Arquivo: Cria_Procedure_de_validacao_dedados.sql
-		• Procedure sp_run_quality_checks que:
-		• Executa regras de validação nos campos-chave.
-		• Registra resultados na tabela QA_RESULTS.
-		• View vw_qa_summary para resumo da qualidade dos dados.
-
-
-
-Como executar:
-
-CALL `Case`.`sp_run_quality_checks`();
-
--- Ver resultados detalhados
+-- Resultados detalhados
 SELECT *
 FROM `Case`.`QA_RESULTS`
 WHERE run_at = (SELECT MAX(run_at) FROM `Case`.`QA_RESULTS`)
 ORDER BY severity DESC, violations DESC;
 
--- Ver resumo
+-- Resumo
 SELECT *
 FROM `Case`.`vw_qa_summary`
-WHERE run_at = (SELECT MAX(run_at) FROM `Case`.`QA_RESULTS`);
+WHERE run_at = (SELECT MAX(run_at) FROM `Case`.`QA_RESULTS`);</pre>
+</details>
 
-4. Cálculo de Conversão por Canal com e sem Qualidade
-	Arquivo: Cria_procedure_e_popula_calculos_conversao.sql
-		• Procedure sp_populate_mart_qc_channel_summary:
-		• Calcula taxa de conversão apenas com dados de qualidade assegurada.
-		• Calcula taxa de conversão com todos os dados (incluindo problemas).
-		• Mostra impacto (%) da falta de qualidade.
-		• Registra contagem de registros usados em cada cenário.
+<h3>4. Conversão por Canal – Dados com e sem Qualidade</h3>
+<p><strong>Arquivo:</strong> <code class="inline">SQL/Cria_procedure_e_popula_calculos_conversao.sql</code></p>
+<ul>
+  <li>Procedure <code class="inline">sp_populate_mart_qc_channel_summary</code> calcula <strong>taxa de conversão</strong> por canal em dois cenários:
+    <ul>
+      <li><strong>Qualidade assegurada</strong> (dados válidos)</li>
+      <li><strong>Todos os dados</strong> (inclui registros problemáticos)</li>
+    </ul>
+  </li>
+  <li>Mostra o <strong>delta</strong> entre cenários e a quantidade de registros usados em cada cálculo.</li>
+</ul>
 
-Como executar:
-CALL `Case`.`sp_populate_mart_qc_channel_summary`();
+<details>
+  <summary><strong>Como executar</strong></summary>
+  <pre>CALL `Case`.`sp_populate_mart_qc_channel_summary`();
 
 SELECT *
 FROM `Case`.`mart_qc_channel_summary`
-ORDER BY all_sessions DESC, source_medium;
+ORDER BY all_sessions DESC, source_medium;</pre>
+</details>
 
+<h3>5. Exportação para Power BI</h3>
+<p>Exportação do MySQL para CSV (pasta <code class="inline">CSV/</code>) e desenvolvimento do dashboard no Power BI (Windows). O cenário comum seria conexão direta ao BigQuery/GCP; aqui a exportação via CSV foi usada por praticidade.</p>
 
-5. Exportação para Power BI (Passo extra)
-	• Exportação do MySQL para CSV (pasta /CSV).
-	• Desenvolvimento de dashboards no Power BI no Windows usando os arquivos 	exportados do Ubuntu.
-	• Recentemente migrei de sistema operacional e passei a utilizar Ubuntu, e, por não ter 	aprendido ainda como instalar o Power BI no Ubuntu, decidi extrair para CSV e 	desenvolver no ambiente windows o dashboard. Porém num cenário comum o BI seria 	conectado diretamente no BigQuery do GCP.
+<h2>3️⃣ Ferramentas Utilizadas</h2>
+<p>ChatGPT Plus • MySQL Workbench 8.0 • Python 3.13 (PyMySQL, python-dotenv) • Ubuntu (dev) • Windows 11 (Power BI)</p>
 
+<hr>
 
+<h2>📈 Desenvolvimento do BI no Power BI</h2>
 
+<h3>1. Conexão e Tratamento de Dados</h3>
+<ul>
+  <li>Conexão via <strong>CSV</strong> simulando fonte direta.</li>
+  <li>Conversão de tipos por tabela (Power Query).</li>
+  <li>Criação da <strong>dCalendario</strong> para análises temporais.</li>
+  <li>Tabela <strong>“Medidas”</strong> para centralizar DAX.</li>
+</ul>
 
-3️⃣ Ferramentas Utilizadas
-	• ChatGPT Plus – Apoio na concepção e automação
-	• MySQL Workbench 8.0 – Modelagem e execução SQL
-	• Python 3.13 – Bibliotecas PyMySQL e python-dotenv
-	• Ubuntu – Ambiente principal de desenvolvimento
-	• Windows 11 – Ambiente para criação de dashboards no Power BI
+<h3>2. Modelagem e Relacionamentos</h3>
+<ul>
+  <li>Relacionamentos entre fatos e <strong>dCalendario</strong>.</li>
+  <li>Vínculo entre <strong>GA4_GTM</strong> (eventos) e <strong>QA_RESULTS</strong> (auditoria) para análises de impacto.</li>
+</ul>
 
-📊 Desenvolvimento do BI no Power BI
+<h3>3. Medidas DAX Implementadas</h3>
+<div class="grid">
+  <div class="card">
+    <div class="kpi">Registros</div>
+    <pre><code>Qtd. Registros = DISTINCTCOUNT(GA4_GTM[id])</code></pre>
+  </div>
+  <div class="card">
+    <div class="kpi">Registros sem qualidade</div>
+    <pre><code>Qtd. Registros bad = DISTINCTCOUNT(QA_RESULTS[id])</code></pre>
+  </div>
+  <div class="card">
+    <div class="kpi">% sem qualidade</div>
+    <pre><code>% s/ Qualidade = DIVIDE([Qtd. Registros bad], [Qtd. Registros])</code></pre>
+  </div>
+</div>
 
-Esta etapa teve como objetivo construir uma análise visual a partir dos dados simulados, permitindo identificar e mensurar o impacto de problemas de qualidade nos eventos registrados.
+<h3>4. Visualizações Criadas</h3>
+<ul>
+  <li><strong>Visão Geral:</strong> KPIs de volume total, volume com problema e % sem qualidade.</li>
+  <li><strong>Análise Temporal:</strong> evolução da qualidade ao longo do tempo.</li>
+  <li><strong>Impacto por Fonte/Canal:</strong> volume e % de problemas por <code class="inline">source_medium</code>.</li>
+  <li><strong>Impacto Financeiro:</strong> (quando aplicável) estimativa do valor afetado por registros com problema.</li>
+</ul>
 
-1️⃣ Conexão e Tratamento de Dados
-	• Conexão inicial realizada a partir de arquivos CSV, simulando uma conexão direta com o 	banco de dados.
-	• Conversão e tratamento dos tipos de dados de cada tabela para garantir consistência 	nas análises.
-	• Criação da tabela dCalendario, utilizada como dimensão de tempo para facilitar análises 	temporais.
-	• Criação de uma tabela chamada "Medidas" para organizar e centralizar todas as medidas 	DAX criadas.
+<hr>
 
-2️⃣ Modelagem e Relacionamentos
-	• Estabelecimento dos relacionamentos entre as tabelas de fatos e a dCalendario, 	garantindo integridade na análise temporal.
-	• Relacionamento entre as tabelas de eventos (GA4_GTM) e a tabela de resultados de QA 	(QA_RESULTS) para cruzamento das informações de qualidade.
+<h2>🔗 Repositório</h2>
+<p>GitHub: <a href="https://github.com/MuriloIuryBarbosa/Case" target="_blank" rel="noopener">github.com/MuriloIuryBarbosa/Case</a></p>
 
-3️⃣ Medidas DAX Implementadas
-	• Quantidade de registros totais: 
-	Qtd. Registros = DISTINCTCOUNT(GA4_GTM[id])
+<p class="muted">Qualquer dúvida ou sugestão, abra uma issue no repositório. 🚀</p>
 
-	• Quantidade de registros sem qualidade:
-	Qtd. Registros bad = DISTINCTCOUNT(QA_RESULTS[id])
-
-	• Percentual de registros sem qualidade:
-	% s/ Qualidade = DIVIDE([Qtd. Registros bad], [Qtd. Registros])
-
-4️⃣ Visualizações Criadas
-	• Visão Geral: Cartões com KPIs de volume total de registros, volume de registros com 	problema e percentual de dados sem qualidade.
-	• Análise Temporal: Gráficos lineares e de colunas para acompanhar a evolução da 	qualidade dos dados ao longo do tempo.
-	• Impacto por Canal/Fonte: Visual comparando o volume e percentual de dados com 	problema por source_medium.
-
-
+</body>
+</html>
