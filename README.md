@@ -5,14 +5,16 @@ O case foi estruturado para demonstrar habilidades de QA de dados, ETL, validaç
 
 1️⃣ Estrutura do Projeto
 
+<pre>
 CASE/
-│── CSV/                         # Exportações CSV para uso no Power BI
-│── SQL/                         # Scripts SQL organizados por etapa
-│── Power_BI/                    # Relatórios e arquivos de conexão
-│── venv/                        # Ambiente virtual Python
-│── .env                         # Variáveis de ambiente (credenciais MySQL)
-│── populate_table.py            # Script para popular dados simulados
-│── README.md                    # Documentação do projeto
+│── CSV/               # Exportações CSV para uso no Power BI
+│── SQL/               # Scripts SQL organizados por etapa
+│── Power_BI/          # Relatórios e arquivos de conexão
+│── venv/              # Ambiente virtual Python
+│── .env               # Variáveis de ambiente (credenciais MySQL)
+│── populate_table.py  # Script para popular dados simulados
+│── README.md          # Documentação do projeto
+</pre>
 
 
 2️⃣ Etapas do Desenvolvimento
@@ -96,3 +98,31 @@ Este projeto simula um fluxo real de QA de dados em ambiente analítico:
     • Validação sistemática da qualidade.
     • Medição do impacto da qualidade no resultado analítico.
     • Integração com ferramentas de BI para análise visual.
+
+📊 Desenvolvimento do BI no Power BI
+
+Esta etapa teve como objetivo construir uma análise visual a partir dos dados simulados, permitindo identificar e mensurar o impacto de problemas de qualidade nos eventos registrados.
+1️⃣ Conexão e Tratamento de Dados
+    • Conexão inicial realizada a partir de arquivos CSV, simulando uma conexão direta com o banco de dados.
+    • Conversão e tratamento dos tipos de dados de cada tabela para garantir consistência nas análises.
+    Criação da tabela dCalendario, utilizada como dimensão de tempo para facilitar análises temporais.
+    • Criação de uma tabela chamada "Medidas" para organizar e centralizar todas as medidas DAX criadas.
+
+2️⃣ Modelagem e Relacionamentos
+    • Estabelecimento dos relacionamentos entre as tabelas de fatos e a dCalendario, garantindo integridade na análise temporal.
+    • Relacionamento entre as tabelas de eventos (GA4_GTM) e a tabela de resultados de QA (QA_RESULTS) para cruzamento das informações de qualidade.
+
+3️⃣ Medidas DAX Implementadas
+    • Quantidade de registros totais:    
+    Qtd. Registros = DISTINCTCOUNT(GA4_GTM[id])
+
+    • Quantidade de registros sem qualidade:
+    Qtd. Registros bad = DISTINCTCOUNT(QA_RESULTS[id])
+
+    • Percentual de registros sem qualidade:
+    % s/ Qualidade = DIVIDE([Qtd. Registros bad], [Qtd. Registros])
+
+4️⃣ Visualizações Criadas
+    • Visão Geral: Cartões com KPIs de volume total de registros, volume de registros com problema e percentual de dados sem qualidade.
+    • Análise Temporal: Gráficos lineares e de colunas para acompanhar a evolução da qualidade dos dados ao longo do tempo.
+    • Impacto por Canal/Fonte: Visual comparando o volume e percentual de dados com problema por source_medium.
