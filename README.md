@@ -154,9 +154,6 @@ ORDER BY all_sessions DESC, source_medium;</pre>
 
 <hr>
 
-<h2>🔗 Repositório</h2>
-<p>GitHub: <a href="https://github.com/MuriloIuryBarbosa/Case" target="_blank" rel="noopener">github.com/MuriloIuryBarbosa/Case</a></p>
-
 <p class="muted">Qualquer dúvida ou sugestão, abra uma issue no repositório. 🚀</p>
 
 </body>
