@@ -1,58 +1,98 @@
-############# PASSOS PARA RESOLUÇÃO DO CASE #############
-• Primeiro passo: criação do Schema “Case” e tabela “GA4_GTM”
-    ◦ Comandos SQL: Cria_Schema_e_tabela_GA4_GTM.sql	
+📊 Case de QA e Análise de Dados – GA4 & BigQuery Simulation (MySQL Local)
 
-• Segundo passo: criação de um script em python para popular a tabela com registros e simular registros com problemas de qualidade aplicando com aleatoriedade de inconsistencias nessas inserções. O Script utiliza variáveis de ambiente para simular um cenário real de desenvolvimento buscando manter a segurança e possibilidade de utilizar Git para versionamento e trabalho em equipe. 
-O Script popula a tabela com 300 registros e aleatoriamente cria 50 registros com problemas de qualidade de dados randomicamente (pode ser duplicatas ou campos vazios por exemplo).
+Este projeto simula um cenário real de qualidade de dados e análise de conversão por canal utilizando dados exportados do Google Analytics 4 (GA4) para BigQuery, mas recriados em MySQL local para evitar custos de cloud.
+O case foi estruturado para demonstrar habilidades de QA de dados, ETL, validação e análise de impacto da qualidade.
 
-DETALHES DO SCRIPT: O que esse script injeta de “problemas”:
-    • source_medium NULL ou valores inválidos
-    • event_id duplicado (10 IDs repetidos)
-    • event_ts com datas futuras
-    • event_name não pertencente ao domínio (ex.: random_event)
-    • page_location malformado ou NULL
-    • purchase sem transaction_id, value negativo ou moeda inválida
-    • items negativo ou irreal para purchase
-    • session_id NULL em alguns casos
+1️⃣ Estrutura do Projeto
 
-• Quarto passo: Criação de comando SQL para validação de campos chaves na tabela e quantificação de quantidade de problemas de qualidade dos dados. O comando garante que a procedure existe e se não existe ele o cria, após essa etapa gera uma view com os checks de dados. Abaixo o comando criado:
-    ◦ Comandos SQL: Cria_Procedure_de_validacao_dedados.sql
-    ◦ COMO RODAR
-    1) Execute a procedure: 
-        CALL `Case`.`sp_run_quality_checks`();
-	2) Veja os resultados detalhados: 
-        SELECT * FROM `Case`.`QA_RESULTS`			
-        WHERE run_at = (SELECT MAX(run_at) 
-        FROM `Case`.`QA_RESULTS`) 
-        ORDER BY severity DESC, violations DESC;
+CASE/
+│── CSV/                         # Exportações CSV para uso no Power BI
+│── SQL/                         # Scripts SQL organizados por etapa
+│── Power_BI/                    # Relatórios e arquivos de conexão
+│── venv/                        # Ambiente virtual Python
+│── .env                         # Variáveis de ambiente (credenciais MySQL)
+│── populate_table.py            # Script para popular dados simulados
+│── README.md                    # Documentação do projeto
 
-	3) Veja o resultado resumido: 
-        SELECT * FROM `Case`.`vw_qa_summary` 
-        WHERE run_at = (SELECT MAX(run_at) 
-        FROM `Case`.`QA_RESULTS`);
 
-• Quinto passo: Criação de um comando SQL que popula uma nova tabela aonde é calculado:
-    ◦ taxa de conversão por canal com os dados que tem qualidade de dados asseguradas 
-    ◦ quantidade de registros que compuseram o calculo com qualidade de dados aseguradas
-    ◦ taxa de conversão por canal com os dados que não tem qualidade de dados assegurados
-    ◦ quantidade de registros que compuseram o calculo sem qualidade de dados aseguradas
-    ◦ delta entre os dois cenários para analisar o impacto que a falta de qualidade de dados gera na análise final
-    ◦ comando SQL: Cria_procedure_e_popula_calculos_conversao.sql 
+2️⃣ Etapas do Desenvolvimento
+1. Criação do Schema e Tabela de Eventos
 
-    ◦ COMO RODAR
-    1) Executar a procedure para popular a tabela:
-        CALL `Case`.`sp_populate_mart_qc_channel_summary`();
-    2) Consultar os resultados atualizados:
-        SELECT *
-        FROM `Case`.`mart_qc_channel_summary`
-        ORDER BY all_sessions DESC, source_medium;
+Arquivo: Cria_Schema_e_tabela_GA4_GTM.sql
+    • Cria o schema Case e a tabela GA4_GTM que receberá os eventos GA4 simulados.
+    • Estrutura compatível com colunas comuns no GA4 Export.
 
-• Sexto passo: recentemente migrei o sistema operacional que utilizo para treinar habilidades em ambiente de desenvolvimento em ambientes linux (no caso estou trabalhando com Ubuntu), portanto fiz a exportação dos dados do MySQL em formato CSV para seguir o desenvolvimento dos dashboards no Power BI em máquina com sistema operacional Windows
+2. População de Dados com Simulação de Problemas de Qualidade
 
-FERRAMENTAS UTILIZADAS:
-    • ChatGPT Plus
-    • Mysql Worbench 8.0
-    • Python 13 (Bibliotecas: PyMySQL e dotenv)
-    • Ubuntu 
-    • Windows 11
+Arquivo: populate_table.py
+    • Script Python que insere 300 registros na tabela, sendo 50 com problemas de qualidade (nulos, duplicatas, datas futuras, valores inválidos etc.).
+    • Utiliza variáveis de ambiente no .env para conexão MySQL.
+    • Garante aleatoriedade controlada para reproduzibilidade.
 
+Problemas simulados:
+    • source_medium nulo ou inválido
+    • event_id duplicado
+    • Datas futuras em event_ts
+    • event_name fora do domínio permitido
+    • page_location malformado
+    • Compras (purchase) sem transaction_id ou valores inválidos
+    • items negativos ou irreais
+    • session_id nulo
+
+3. Validação de Qualidade dos Dados
+
+Arquivo: Cria_Procedure_de_validacao_dedados.sql
+    • Procedure sp_run_quality_checks que:
+        • Executa regras de validação nos campos-chave.
+        • Registra resultados na tabela QA_RESULTS.
+    • View vw_qa_summary para resumo da qualidade dos dados.
+
+Como executar:
+
+CALL `Case`.`sp_run_quality_checks`();
+
+-- Ver resultados detalhados
+SELECT *
+FROM `Case`.`QA_RESULTS`
+WHERE run_at = (SELECT MAX(run_at) FROM `Case`.`QA_RESULTS`)
+ORDER BY severity DESC, violations DESC;
+
+-- Ver resumo
+SELECT *
+FROM `Case`.`vw_qa_summary`
+WHERE run_at = (SELECT MAX(run_at) FROM `Case`.`QA_RESULTS`);
+
+4. Cálculo de Conversão por Canal com e sem Qualidade
+
+Arquivo: Cria_procedure_e_popula_calculos_conversao.sql
+    • Procedure sp_populate_mart_qc_channel_summary:
+        • Calcula taxa de conversão apenas com dados de qualidade assegurada.
+        • Calcula taxa de conversão com todos os dados (incluindo problemas).
+        • Mostra impacto (%) da falta de qualidade.
+        • Registra contagem de registros usados em cada cenário.
+
+Como executar:
+CALL `Case`.`sp_populate_mart_qc_channel_summary`();
+
+SELECT *
+FROM `Case`.`mart_qc_channel_summary`
+ORDER BY all_sessions DESC, source_medium;
+
+5. Exportação para Power BI
+    • Exportação do MySQL para CSV (pasta /CSV).
+    • Desenvolvimento de dashboards no Power BI no Windows usando os arquivos exportados do Ubuntu.
+
+3️⃣ Ferramentas Utilizadas
+    • ChatGPT Plus – Apoio na concepção e automação
+    • MySQL Workbench 8.0 – Modelagem e execução SQL
+    • Python 3.13 – Bibliotecas PyMySQL e python-dotenv
+    • Ubuntu – Ambiente principal de desenvolvimento
+    • Windows 11 – Ambiente para criação de dashboards no Power BI
+
+4️⃣ Objetivo do Case
+
+Este projeto simula um fluxo real de QA de dados em ambiente analítico:
+    • Geração de dados simulados com problemas.
+    • Validação sistemática da qualidade.
+    • Medição do impacto da qualidade no resultado analítico.
+    • Integração com ferramentas de BI para análise visual.
