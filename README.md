@@ -3,27 +3,6 @@
 <head>
 <meta charset="utf-8">
 <title>Case de QA e Análise de Dados – GA4 & BigQuery Simulation (MySQL Local)</title>
-<style>
-  :root { --fg:#0f172a; --muted:#475569; --accent:#0ea5e9; --bg:#ffffff; --chip:#f1f5f9; }
-  body { font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Ubuntu,'Helvetica Neue',Arial,'Noto Sans',sans-serif; color:var(--fg); line-height:1.6; margin:0; padding:24px; background:var(--bg);}
-  h1,h2,h3{ margin:18px 0 8px; }
-  h1{ font-size:26px; }
-  h2{ font-size:20px; border-left:4px solid var(--accent); padding-left:8px; }
-  h3{ font-size:18px; }
-  p,li{ color:var(--fg); }
-  .muted{ color:var(--muted); }
-  .badge{ display:inline-block; background:var(--chip); padding:4px 8px; border-radius:999px; font-size:12px; margin-right:6px; }
-  pre, code { font-family: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace; }
-  pre { background:#0b1020; color:#e6edf3; padding:12px 14px; border-radius:10px; overflow:auto; }
-  code.inline { background:#0b1020; color:#e6edf3; padding:2px 6px; border-radius:6px; }
-  .kpi { display:inline-block; background:#ecfeff; border:1px solid #cffafe; color:#164e63; padding:4px 8px; border-radius:6px; margin-right:6px; font-size:12px;}
-  .grid { display:grid; grid-template-columns: 1fr; gap:10px; }
-  .card { border:1px solid #e2e8f0; border-radius:12px; padding:14px; background:#fff; }
-  .tree pre{ background:#0f172a; }
-  a { color:#0366d6; text-decoration:none; }
-  a:hover { text-decoration:underline; }
-  hr{ border:none; border-top:1px solid #e2e8f0; margin:20px 0; }
-</style>
 </head>
 <body>
 
